@@ -1,0 +1,15 @@
+<p><a href="{% url 'home' %}">← Back</a> | <a href="/admin/">Admin</a></p>
+
+<h1>{{ product.name }}</h1>
+
+<p><strong>Producer:</strong> {{ product.producer.username }}</p>
+<p><strong>Category:</strong> {{ product.category.name }}</p>
+<p><strong>Price:</strong> £{{ product.price_gbp }} / {{ product.unit }}</p>
+<p><strong>Stock:</strong> {{ product.stock_qty }}</p>
+<p><strong>Availability:</strong> {{ product.availability }}</p>
+
+<h3>Description</h3>
+<p>{{ product.description|default:"(No description)" }}</p>
+
+<h3>Allergens</h3>
+<p><strong>{{ product.allergens }}</strong></p>

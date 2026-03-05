@@ -1,0 +1,25 @@
+<h1>Bristol Marketplace</h1>
+
+<p><a href="/admin/">Admin</a></p>
+
+<h2>Categories</h2>
+<ul>
+  {% for c in categories %}
+    <li>{{ c.name }}</li>
+  {% empty %}
+    <li>No categories yet.</li>
+  {% endfor %}
+</ul>
+
+<h2>Latest Products</h2>
+<ul>
+  {% for p in products %}
+    <li>
+      <a href="{% url 'product_detail' p.id %}">{{ p.name }}</a>
+      — £{{ p.price_gbp }} / {{ p.unit }}
+      ({{ p.category.name }}) by {{ p.producer.username }}
+    </li>
+  {% empty %}
+    <li>No products yet.</li>
+  {% endfor %}
+</ul>
