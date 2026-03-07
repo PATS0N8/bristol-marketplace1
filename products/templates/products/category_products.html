@@ -1,26 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Home | Bristol Marketplace{% endblock %}
+{% block title %}{{ category.name }} | Bristol Marketplace{% endblock %}
 
 {% block content %}
 
+<a class="back-link" href="{% url 'home' %}">← Back to marketplace</a>
+
 <section class="hero">
-    <h2>Local Food Marketplace</h2>
-    <p>Browse fresh produce from Bristol's independent farmers.</p>
+    <h2>{{ category.name }}</h2>
+    <p>Products available in this category.</p>
 </section>
 
-<h2 class="section-title">Categories</h2>
-<div class="category-grid">
-    {% for category in categories %}
-        <a class="category-card" href="{% url 'category_products' category.id %}">
-            {{ category.name }}
-        </a>
-    {% empty %}
-        <div class="empty-state">No categories yet.</div>
-    {% endfor %}
-</div>
-
-<h2 class="section-title">Latest Products</h2>
+<h2 class="section-title">{{ category.name }} Products</h2>
 
 <div class="product-grid">
     {% for product in products %}
@@ -32,7 +23,6 @@
             </h3>
 
             <p class="product-meta"><strong>Producer:</strong> {{ product.producer.username }}</p>
-            <p class="product-meta"><strong>Category:</strong> {{ product.category.name }}</p>
             <p class="product-meta"><strong>Stock:</strong> {{ product.stock_qty }}</p>
             <p class="price">£{{ product.price_gbp }}</p>
 
@@ -43,7 +33,7 @@
             </p>
         </div>
     {% empty %}
-        <div class="empty-state">No products available yet.</div>
+        <div class="empty-state">No products in this category yet.</div>
     {% endfor %}
 </div>
 
