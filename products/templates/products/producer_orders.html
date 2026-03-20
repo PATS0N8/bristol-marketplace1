@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Orders to Fulfil | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2>Orders to Fulfil</h2>
+
+{% for item in items %}
+    <div>
+        <p><strong>Order {{ item.order.id }}</strong></p>
+        <p>Customer: {{ item.order.customer.username }}</p>
+        <p>Product: {{ item.product.name }}</p>
+        <p>Quantity: {{ item.quantity }}</p>
+        <p>Price: £{{ item.price }}</p>
+    </div>
+    <hr>
+{% empty %}
+    <p>No orders to fulfil yet.</p>
+{% endfor %}
+
+{% endblock %}

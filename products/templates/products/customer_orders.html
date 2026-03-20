@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2>My Orders</h2>
+
+{% for order in orders %}
+    <div>
+        <h3>Order {{ order.id }}</h3>
+        <p>Placed: {{ order.created_at }}</p>
+        <ul>
+            {% for item in order.orderitem_set.all %}
+                <li>{{ item.product.name }} — {{ item.quantity }} x £{{ item.price }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <hr>
+{% empty %}
+    <p>You have no past orders.</p>
+{% endfor %}
+
+{% endblock %}

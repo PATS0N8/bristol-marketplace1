@@ -4,33 +4,36 @@
 
 {% block content %}
 
-<a class="back-link" href="{% url 'home' %}">← Back to marketplace</a>
+<a class="back-link" href="/">← Back to home</a>
 
 <section class="hero">
-    <h2>{{ category.name }}</h2>
-    <p>Products available in this category.</p>
+    <div class="hero-card">
+        <h2>{{ category.name|title }}</h2>
+        <p>Browse all products available in this category.</p>
+    </div>
 </section>
-
-<h2 class="section-title">{{ category.name }} Products</h2>
 
 <div class="product-grid">
     {% for product in products %}
         <div class="product-card">
-            <h3>
-                <a href="{% url 'product_detail' product.id %}">
-                    {{ product.name }}
-                </a>
-            </h3>
+            <div class="product-image"></div>
+            <div class="product-content">
+                <h3>
+                    <a href="{% url 'product_detail' product.id %}">{{ product.name|title }}</a>
+                </h3>
 
-            <p class="product-meta"><strong>Producer:</strong> {{ product.producer.username }}</p>
-            <p class="product-meta"><strong>Stock:</strong> {{ product.stock_qty }}</p>
-            <p class="price">£{{ product.price_gbp }}</p>
+                <p class="product-meta"><strong>Producer:</strong> {{ product.producer.username }}</p>
+                <p class="product-meta"><strong>Stock:</strong> {{ product.stock_qty }}</p>
+                <p class="price">£{{ product.price_gbp }}</p>
 
-            <p>
-                <a class="details-link" href="{% url 'product_detail' product.id %}">
-                    View product details
-                </a>
-            </p>
+                <div class="card-actions">
+                    <a class="btn btn-secondary" href="{% url 'product_detail' product.id %}">View Details</a>
+                    <form method="post" action="{% url 'add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" type="submit">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
         </div>
     {% empty %}
         <div class="empty-state">No products in this category yet.</div>

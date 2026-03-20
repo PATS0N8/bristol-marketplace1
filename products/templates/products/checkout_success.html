@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Order Successful | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2>Order placed successfully</h2>
+<p>Order ID: {{ order.id }}</p>
+<p><a href="{% url 'customer_orders' %}">View my orders</a></p>
+<p><a href="/">Return home</a></p>
+{% endblock %}

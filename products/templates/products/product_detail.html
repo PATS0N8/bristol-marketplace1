@@ -1,15 +1,38 @@
-<p><a href="{% url 'home' %}">← Back</a> | <a href="/admin/">Admin</a></p>
+{% extends "base.html" %}
 
-<h1>{{ product.name }}</h1>
+{% block title %}{{ product.name }} | Bristol Marketplace{% endblock %}
 
-<p><strong>Producer:</strong> {{ product.producer.username }}</p>
-<p><strong>Category:</strong> {{ product.category.name }}</p>
-<p><strong>Price:</strong> £{{ product.price_gbp }} / {{ product.unit }}</p>
-<p><strong>Stock:</strong> {{ product.stock_qty }}</p>
-<p><strong>Availability:</strong> {{ product.availability }}</p>
+{% block content %}
 
-<h3>Description</h3>
-<p>{{ product.description|default:"(No description)" }}</p>
+<a class="back-link" href="/">← Back to home</a>
 
-<h3>Allergens</h3>
-<p><strong>{{ product.allergens }}</strong></p>
+<div class="detail-hero"></div>
+
+<div class="detail-card">
+    <h1>{{ product.name|title }}</h1>
+
+    <p class="detail-row"><strong>Producer:</strong> {{ product.producer.username }}</p>
+    <p class="detail-row"><strong>Category:</strong> {{ product.category.name }}</p>
+    <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
+    <p class="detail-row"><strong>Stock:</strong> {{ product.stock_qty }}</p>
+    <p class="detail-row"><strong>Availability:</strong> {{ product.availability }}</p>
+
+    <div class="info-panel">
+        <h3>Description</h3>
+        <p>{{ product.description|default:"No description available." }}</p>
+    </div>
+
+    <div class="allergen-box">
+        <strong>Allergen Information:</strong><br>
+        {{ product.allergens|default:"None listed" }}
+    </div>
+
+    <div class="card-actions">
+        <form method="post" action="{% url 'add_to_cart' product.id %}">
+            {% csrf_token %}
+            <button class="btn btn-primary" type="submit">Add to Cart</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
