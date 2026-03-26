@@ -3,21 +3,30 @@
 {% block title %}My Orders | Bristol Marketplace{% endblock %}
 
 {% block content %}
-<h2>My Orders</h2>
+<h2 class="section-title">My Orders</h2>
 
+<div class="panel">
 {% for order in orders %}
-    <div>
+    <div class="list-row">
         <h3>Order {{ order.id }}</h3>
-        <p>Placed: {{ order.created_at }}</p>
+        <p class="muted">Placed: {{ order.created_at }}</p>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+        <p><strong>Payment Reference:</strong> {{ order.payment_reference }}</p>
         <ul>
             {% for item in order.orderitem_set.all %}
-                <li>{{ item.product.name }} — {{ item.quantity }} x £{{ item.price }}</li>
+                <li>{{ item.product.name }} — {{ item.quantity }} × £{{ item.price }}</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Status Timeline</h4>
+        <ul>
+            {% for entry in order.status_history.all %}
+                <li>{{ entry.created_at }} — {{ entry.status }}{% if entry.notes %} — {{ entry.notes }}{% endif %}</li>
             {% endfor %}
         </ul>
     </div>
-    <hr>
 {% empty %}
-    <p>You have no past orders.</p>
+    <p class="muted">You have no past orders.</p>
 {% endfor %}
-
+</div>
 {% endblock %}

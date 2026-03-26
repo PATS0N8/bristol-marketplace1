@@ -3,13 +3,12 @@
 {% block title %}{{ category.name }} | Bristol Marketplace{% endblock %}
 
 {% block content %}
-
 <a class="back-link" href="/">← Back to home</a>
 
 <section class="hero">
     <div class="hero-card">
         <h2>{{ category.name|title }}</h2>
-        <p>Browse all products available in this category.</p>
+        <p>Browse all products in this category.</p>
     </div>
 </section>
 
@@ -18,14 +17,10 @@
         <div class="product-card">
             <div class="product-image"></div>
             <div class="product-content">
-                <h3>
-                    <a href="{% url 'product_detail' product.id %}">{{ product.name|title }}</a>
-                </h3>
-
+                <h3><a href="{% url 'product_detail' product.id %}">{{ product.name|title }}</a></h3>
                 <p class="product-meta"><strong>Producer:</strong> {{ product.producer.username }}</p>
                 <p class="product-meta"><strong>Stock:</strong> {{ product.stock_qty }}</p>
                 <p class="price">£{{ product.price_gbp }}</p>
-
                 <div class="card-actions">
                     <a class="btn btn-secondary" href="{% url 'product_detail' product.id %}">View Details</a>
                     <form method="post" action="{% url 'add_to_cart' product.id %}">
@@ -39,5 +34,4 @@
         <div class="empty-state">No products in this category yet.</div>
     {% endfor %}
 </div>
-
 {% endblock %}

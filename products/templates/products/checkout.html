@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Checkout</h2>
+
+<div class="panel">
+    {% for producer_name, producer_items in grouped.items %}
+        <h3>{{ producer_name }}</h3>
+        {% for item in producer_items %}
+            <div class="list-row">
+                <strong>{{ item.product.name }}</strong> — {{ item.quantity }} × £{{ item.product.price_gbp }}
+                <div class="muted">Subtotal: £{{ item.subtotal }}</div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <h3>Total: £{{ total }}</h3>
+
+    <div class="card-actions">
+        <a class="btn btn-secondary" href="/cart/">Back to Cart</a>
+        <a class="btn btn-primary" href="/payment/">Continue to Payment</a>
+    </div>
+</div>
+{% endblock %}

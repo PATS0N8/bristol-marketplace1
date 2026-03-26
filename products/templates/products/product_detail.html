@@ -3,14 +3,12 @@
 {% block title %}{{ product.name }} | Bristol Marketplace{% endblock %}
 
 {% block content %}
-
 <a class="back-link" href="/">← Back to home</a>
 
 <div class="detail-hero"></div>
 
 <div class="detail-card">
     <h1>{{ product.name|title }}</h1>
-
     <p class="detail-row"><strong>Producer:</strong> {{ product.producer.username }}</p>
     <p class="detail-row"><strong>Category:</strong> {{ product.category.name }}</p>
     <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
@@ -34,5 +32,4 @@
         </form>
     </div>
 </div>
-
 {% endblock %}

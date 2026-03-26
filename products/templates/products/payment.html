@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Payment | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Payment</h2>
+
+<div class="panel" style="max-width: 680px;">
+    <p class="muted">Demo payment form for Sprint 2.</p>
+
+    {% for item in items %}
+        <div class="list-row">
+            <strong>{{ item.product.name }}</strong> — {{ item.quantity }} × £{{ item.product.price_gbp }}
+        </div>
+    {% endfor %}
+
+    <h3>Total: £{{ total }}</h3>
+
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label><strong>Name on card</strong></label><br>
+            <input type="text" name="card_name" required style="width:100%;">
+        </p>
+        <p>
+            <label><strong>Card number</strong></label><br>
+            <input type="text" name="card_number" required style="width:100%;" placeholder="4242 4242 4242 4242">
+        </p>
+        <p>
+            <label><strong>Expiry</strong></label><br>
+            <input type="text" name="expiry" required style="width:100%;" placeholder="12/28">
+        </p>
+        <p>
+            <label><strong>CVV</strong></label><br>
+            <input type="text" name="cvv" required style="width:100%;" placeholder="123">
+        </p>
+
+        <button class="btn btn-primary" type="submit">Pay and Place Order</button>
+    </form>
+</div>
+{% endblock %}

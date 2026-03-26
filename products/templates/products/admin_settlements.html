@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Settlements | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Weekly Settlement / Commission Report</h2>
+
+<div class="panel">
+{% for row in rows %}
+    <div class="list-row">
+        <p><strong>Order {{ row.order.id }}</strong></p>
+        <p>Producer: {{ row.producer_name }}</p>
+        <p>Gross: £{{ row.gross }}</p>
+        <p>Commission (5%): £{{ row.commission }}</p>
+        <p>Payout (95%): £{{ row.payout }}</p>
+        <p class="muted">Customer: {{ row.order.customer.username }} | Status: {{ row.order.status }}</p>
+    </div>
+{% empty %}
+    <p class="muted">No settlement data yet.</p>
+{% endfor %}
+</div>
+{% endblock %}

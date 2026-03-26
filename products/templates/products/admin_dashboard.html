@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Admin Dashboard</h2>
+
+<div class="card-actions" style="margin-bottom: 24px;">
+    <a class="btn btn-primary" href="/dashboard/settlements/">View Settlements</a>
+</div>
+
+<div class="stats">
+    <div class="stat-card">
+        <h3>{{ user_count }}</h3>
+        <p>Users</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ product_count }}</h3>
+        <p>Products</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ order_count }}</h3>
+        <p>Orders</p>
+    </div>
+</div>
+
+<div class="panel">
+    <h3>Recent Orders</h3>
+    {% for order in orders %}
+        <div class="list-row">
+            Order {{ order.id }} — {{ order.customer.username }} — {{ order.status }}
+        </div>
+    {% empty %}
+        <p class="muted">No orders yet.</p>
+    {% endfor %}
+</div>
+
+<div class="panel" style="margin-top: 22px;">
+    <h3>Recent Products</h3>
+    {% for product in products %}
+        <div class="list-row">
+            {{ product.name }} — {{ product.category.name }} — {{ product.producer.username }}
+        </div>
+    {% empty %}
+        <p class="muted">No products yet.</p>
+    {% endfor %}
+</div>
+
+<div class="panel" style="margin-top: 22px;">
+    <h3>Recent Users</h3>
+    {% for user in users %}
+        <div class="list-row">
+            {{ user.username }} — {{ user.role }}
+        </div>
+    {% empty %}
+        <p class="muted">No users yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

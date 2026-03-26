@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Add a Product</h2>
+
+<div class="panel" style="max-width: 760px;">
+    {% if error %}
+        <p style="color:#dc2626; font-weight:bold;">{{ error }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <p>
+            <label><strong>Name</strong></label><br>
+            <input type="text" name="name" required style="width:100%;">
+        </p>
+
+        <p>
+            <label><strong>Description</strong></label><br>
+            <input type="text" name="description" style="width:100%;">
+        </p>
+
+        <p>
+            <label><strong>Category</strong></label><br>
+            <select name="category" required style="width:100%;">
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            <label><strong>Price</strong></label><br>
+            <input type="text" name="price_gbp" required style="width:100%;">
+        </p>
+
+        <p>
+            <label><strong>Stock Quantity</strong></label><br>
+            <input type="number" name="stock_qty" min="0" required style="width:100%;">
+        </p>
+
+        <p>
+            <label><strong>Availability</strong></label><br>
+            <select name="availability" style="width:100%;">
+                <option value="IN_STOCK">In Stock</option>
+                <option value="LOW_STOCK">Low Stock</option>
+                <option value="OUT_OF_STOCK">Out of Stock</option>
+            </select>
+        </p>
+
+        <p>
+            <label><strong>Allergens</strong></label><br>
+            <input type="text" name="allergens" style="width:100%;">
+        </p>
+
+        <button class="btn btn-primary" type="submit">Create Product</button>
+    </form>
+</div>
+{% endblock %}

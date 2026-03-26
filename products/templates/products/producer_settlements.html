@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}My Earnings | Bristol Marketplace{% endblock %}
+
+{% block content %}
+<h2 class="section-title">My Earnings</h2>
+
+<div class="panel">
+
+<h3>Summary</h3>
+<p><strong>Total Revenue:</strong> £{{ total_gross }}</p>
+<p><strong>Total Commission (5%):</strong> £{{ total_commission }}</p>
+<p><strong>Total Payout (95%):</strong> £{{ total_payout }}</p>
+
+<hr>
+
+<h3>Per Order Breakdown</h3>
+
+{% for row in rows %}
+    <div class="list-row">
+        <p><strong>Order {{ row.order.id }}</strong></p>
+        <p>{{ row.product.name }} — {{ row.quantity }}</p>
+        <p>Gross: £{{ row.gross }}</p>
+        <p>Commission: £{{ row.commission }}</p>
+        <p>Payout: £{{ row.payout }}</p>
+        <p class="muted">Status: {{ row.order.status }}</p>
+    </div>
+{% empty %}
+    <p class="muted">No earnings yet.</p>
+{% endfor %}
+
+</div>
+{% endblock %}

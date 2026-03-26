@@ -3,30 +3,35 @@
 {% block title %}Cart | Bristol Marketplace{% endblock %}
 
 {% block content %}
-<h2>Your Cart</h2>
+<h2 class="section-title">Your Cart</h2>
 
+<div class="panel">
 {% if items %}
-    {% for item in items %}
-        <form method="post" action="{% url 'update_cart' item.product.id %}">
-            {% csrf_token %}
-            <p><strong>{{ item.product.name }}</strong> (£{{ item.product.price_gbp }})</p>
-            <input type="number" name="quantity" value="{{ item.quantity }}" min="0">
-            <button type="submit">Update</button>
-        </form>
-        <a href="{% url 'remove_from_cart' item.product.id %}">Remove</a>
-        <p>Subtotal: £{{ item.subtotal }}</p>
-        <hr>
+    {% for producer_name, producer_items in grouped.items %}
+        <h3>{{ producer_name }}</h3>
+        {% for item in producer_items %}
+            <div class="list-row">
+                <form method="post" action="{% url 'update_cart' item.product.id %}">
+                    {% csrf_token %}
+                    <p><strong>{{ item.product.name }}</strong> (£{{ item.product.price_gbp }})</p>
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="0">
+                    <button class="btn btn-secondary" type="submit">Update</button>
+                </form>
+                <p class="muted">Subtotal: £{{ item.subtotal }}</p>
+                <a class="btn btn-secondary" href="{% url 'remove_from_cart' item.product.id %}">Remove</a>
+            </div>
+        {% endfor %}
     {% endfor %}
 
     <h3>Total: £{{ total }}</h3>
 
     {% if user.is_authenticated and user.role == "CUSTOMER" %}
-        <a href="{% url 'checkout' %}">Checkout</a>
+        <a class="btn btn-primary" href="{% url 'checkout' %}">Continue to Checkout</a>
     {% else %}
-        <p><a href="{% url 'login' %}">Login as a customer</a> to checkout.</p>
+        <p><a class="btn btn-primary" href="{% url 'login' %}">Login as a customer to checkout</a></p>
     {% endif %}
 {% else %}
-    <p>Your cart is empty.</p>
+    <p class="muted">Your cart is empty.</p>
 {% endif %}
-
+</div>
 {% endblock %}

@@ -3,8 +3,15 @@
 {% block title %}Order Successful | Bristol Marketplace{% endblock %}
 
 {% block content %}
-<h2>Order placed successfully</h2>
-<p>Order ID: {{ order.id }}</p>
-<p><a href="{% url 'customer_orders' %}">View my orders</a></p>
-<p><a href="/">Return home</a></p>
+<h2 class="section-title">Order placed successfully</h2>
+
+<div class="panel">
+    <p><strong>Order ID:</strong> {{ order.id }}</p>
+    <p><strong>Status:</strong> {{ order.status }}</p>
+    <p><strong>Payment Reference:</strong> {{ order.payment_reference }}</p>
+    <div class="card-actions">
+        <a class="btn btn-primary" href="/my-orders/">View My Orders</a>
+        <a class="btn btn-secondary" href="/">Return Home</a>
+    </div>
+</div>
 {% endblock %}

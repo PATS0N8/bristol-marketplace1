@@ -3,18 +3,22 @@
 {% block title %}Home | Bristol Marketplace{% endblock %}
 
 {% block content %}
-
 <section class="hero">
     <div class="hero-card">
-        <h2>Fresh local food from Bristol producers</h2>
-        <p>Discover seasonal produce, support local growers, and add items to your cart straight from the marketplace.</p>
+        <h1>Fresh local food from Bristol producers</h1>
+        <p>Search, browse by category, and order local produce through one marketplace.</p>
         <div class="hero-badges">
+            <span>Local growers</span>
             <span>Fresh produce</span>
-            <span>Local sellers</span>
-            <span>Simple ordering</span>
+            <span>Simple checkout</span>
         </div>
     </div>
 </section>
+
+<form class="search-row" method="get" action="/">
+    <input type="text" name="q" placeholder="Search for products..." value="{{ query }}">
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
 
 <h2 class="section-title">Shop by category</h2>
 <p class="section-subtitle">Choose a category to browse all items in that section.</p>
@@ -29,23 +33,19 @@
     {% endfor %}
 </div>
 
-<h2 class="section-title">Latest Products</h2>
-<p class="section-subtitle">Browse the newest items added by local producers.</p>
+<h2 class="section-title">Products</h2>
+<p class="section-subtitle">Browse the latest items from local suppliers.</p>
 
 <div class="product-grid">
     {% for product in products %}
         <div class="product-card">
             <div class="product-image"></div>
             <div class="product-content">
-                <h3>
-                    <a href="{% url 'product_detail' product.id %}">{{ product.name|title }}</a>
-                </h3>
-
+                <h3><a href="{% url 'product_detail' product.id %}">{{ product.name|title }}</a></h3>
                 <p class="product-meta"><strong>Producer:</strong> {{ product.producer.username }}</p>
                 <p class="product-meta"><strong>Category:</strong> {{ product.category.name }}</p>
                 <p class="product-meta"><strong>Stock:</strong> {{ product.stock_qty }}</p>
                 <p class="price">£{{ product.price_gbp }}</p>
-
                 <div class="card-actions">
                     <a class="btn btn-secondary" href="{% url 'product_detail' product.id %}">View Details</a>
                     <form method="post" action="{% url 'add_to_cart' product.id %}">
@@ -56,8 +56,7 @@
             </div>
         </div>
     {% empty %}
-        <div class="empty-state">No products available yet.</div>
+        <div class="empty-state">No matching products found.</div>
     {% endfor %}
 </div>
-
 {% endblock %}

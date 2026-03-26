@@ -5,346 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bristol Marketplace{% endblock %}</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f7f3;
-            color: #1f2937;
-        }
-
-        .container {
-            width: 92%;
-            max-width: 1180px;
-            margin: 0 auto;
-        }
-
-        .site-header {
-            background: linear-gradient(135deg, #1b4332, #2d6a4f);
-            color: white;
-            padding: 18px 0;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .nav-wrap {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .brand a {
-            color: white;
-            text-decoration: none;
-            font-size: 30px;
-            font-weight: 800;
-            letter-spacing: 0.2px;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 700;
-            opacity: 0.95;
-        }
-
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
-
-        .main-content {
-            padding: 28px 0 40px;
-        }
-
-        .user-banner {
-            background: #e8f5e9;
-            border: 1px solid #c8e6c9;
-            color: #1b4332;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .hero {
-            position: relative;
-            min-height: 380px;
-            border-radius: 24px;
-            overflow: hidden;
-            display: flex;
-            align-items: end;
-            padding: 34px;
-            margin-bottom: 28px;
-            background:
-                linear-gradient(to top, rgba(0,0,0,0.62), rgba(0,0,0,0.16)),
-                url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
-            box-shadow: 0 10px 28px rgba(0,0,0,0.16);
-        }
-
-        .hero-card {
-            max-width: 640px;
-            background: rgba(255,255,255,0.14);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 20px;
-            padding: 24px;
-            color: white;
-        }
-
-        .hero-card h2 {
-            margin: 0 0 12px 0;
-            font-size: 42px;
-            line-height: 1.1;
-        }
-
-        .hero-card p {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            line-height: 1.5;
-        }
-
-        .hero-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .hero-badges span {
-            background: rgba(255,255,255,0.18);
-            border: 1px solid rgba(255,255,255,0.22);
-            padding: 9px 14px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .section-title {
-            margin: 30px 0 14px;
-            color: #1b4332;
-            font-size: 30px;
-        }
-
-        .section-subtitle {
-            margin: 0 0 18px;
-            color: #5b6472;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-
-        .category-card {
-            display: block;
-            text-decoration: none;
-            color: #1b4332;
-            background: linear-gradient(135deg, #ffffff, #edf7ef);
-            border: 1px solid #d8eadb;
-            border-radius: 18px;
-            padding: 22px 16px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 18px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-        }
-
-        .category-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.10);
-            border-color: #95d5b2;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
-            gap: 18px;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 22px;
-            overflow: hidden;
-            border: 1px solid #ebefe7;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.07);
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 28px rgba(0,0,0,0.11);
-        }
-
-        .product-image {
-            height: 180px;
-            background:
-                linear-gradient(to top, rgba(0,0,0,0.28), rgba(0,0,0,0.08)),
-                url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
-        }
-
-        .product-content {
-            padding: 18px;
-        }
-
-        .product-card h3 {
-            margin: 0 0 10px;
-            font-size: 26px;
-        }
-
-        .product-card h3 a {
-            text-decoration: none;
-            color: #1b4332;
-        }
-
-        .product-card h3 a:hover {
-            text-decoration: underline;
-        }
-
-        .product-meta {
-            margin: 7px 0;
-            color: #5b6472;
-        }
-
-        .price {
-            margin-top: 14px;
-            font-size: 24px;
-            font-weight: 800;
-            color: #2d6a4f;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 18px;
-        }
-
-        .btn {
-            display: inline-block;
-            border: none;
-            border-radius: 12px;
-            padding: 11px 16px;
-            font-weight: 800;
-            text-decoration: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn-primary {
-            background: #2d6a4f;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #1f4f3a;
-        }
-
-        .btn-secondary {
-            background: #edf7ef;
-            color: #1b4332;
-        }
-
-        .btn-secondary:hover {
-            background: #dff0e3;
-        }
-
-        .detail-hero {
-            height: 280px;
-            border-radius: 24px;
-            margin-bottom: 22px;
-            background:
-                linear-gradient(to top, rgba(0,0,0,0.34), rgba(0,0,0,0.08)),
-                url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
-            box-shadow: 0 10px 28px rgba(0,0,0,0.14);
-        }
-
-        .detail-card {
-            background: white;
-            border-radius: 22px;
-            padding: 28px;
-            border: 1px solid #ebefe7;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.07);
-        }
-
-        .detail-card h1 {
-            margin-top: 0;
-            color: #1b4332;
-            font-size: 38px;
-        }
-
-        .detail-row {
-            margin: 10px 0;
-            color: #465061;
-            font-size: 17px;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-bottom: 18px;
-            color: #1d4ed8;
-            text-decoration: none;
-            font-weight: 800;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        .allergen-box {
-            margin-top: 22px;
-            padding: 16px;
-            border-radius: 14px;
-            background: #fff1f2;
-            border-left: 6px solid #dc2626;
-        }
-
-        .empty-state {
-            background: white;
-            border: 1px solid #ebefe7;
-            border-radius: 18px;
-            padding: 18px;
-            color: #6b7280;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
-        }
-
-        .info-panel {
-            background: linear-gradient(135deg, #ffffff, #f8fbf8);
-            border: 1px solid #ebefe7;
-            border-radius: 18px;
-            padding: 18px;
-            margin-bottom: 24px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
-        }
-
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f7f3; color: #1f2937; }
+        .container { width: 92%; max-width: 1180px; margin: 0 auto; }
+        .site-header { background: linear-gradient(135deg, #1b4332, #2d6a4f); color: white; padding: 18px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.12); position: sticky; top: 0; z-index: 10; }
+        .nav-wrap { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+        .brand a { color: white; text-decoration: none; font-size: 30px; font-weight: 800; }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 700; opacity: 0.95; }
+        .nav-links a:hover { text-decoration: underline; }
+        .main-content { padding: 28px 0 40px; }
+        .user-banner { background: #e8f5e9; border: 1px solid #c8e6c9; color: #1b4332; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
+        .hero { position: relative; min-height: 380px; border-radius: 24px; overflow: hidden; display: flex; align-items: end; padding: 34px; margin-bottom: 28px; background: linear-gradient(to top, rgba(0,0,0,0.62), rgba(0,0,0,0.16)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat; box-shadow: 0 10px 28px rgba(0,0,0,0.16); }
+        .hero-card { max-width: 640px; background: rgba(255,255,255,0.14); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.18); border-radius: 20px; padding: 24px; color: white; }
+        .hero-card h1, .hero-card h2 { margin: 0 0 12px 0; font-size: 42px; line-height: 1.1; }
+        .hero-card p { margin: 0 0 16px 0; font-size: 18px; line-height: 1.5; }
+        .hero-badges { display: flex; flex-wrap: wrap; gap: 10px; }
+        .hero-badges span { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.22); padding: 9px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+        .section-title { margin: 30px 0 14px; color: #1b4332; font-size: 30px; }
+        .section-subtitle { margin: 0 0 18px; color: #5b6472; }
+        .search-row { margin: 18px 0 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .search-row input { flex: 1; min-width: 240px; padding: 12px 14px; border-radius: 12px; border: 1px solid #cfd8cf; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .category-card { display: block; text-decoration: none; color: #1b4332; background: linear-gradient(135deg, #ffffff, #edf7ef); border: 1px solid #d8eadb; border-radius: 18px; padding: 22px 16px; text-align: center; font-weight: 800; font-size: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+        .category-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.10); border-color: #95d5b2; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(285px, 1fr)); gap: 18px; }
+        .product-card { background: white; border-radius: 22px; overflow: hidden; border: 1px solid #ebefe7; box-shadow: 0 8px 24px rgba(0,0,0,0.07); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(0,0,0,0.11); }
+        .product-image { height: 180px; background: linear-gradient(to top, rgba(0,0,0,0.28), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat; }
+        .product-content { padding: 18px; }
+        .product-card h3 { margin: 0 0 10px; font-size: 26px; }
+        .product-card h3 a { text-decoration: none; color: #1b4332; }
+        .product-card h3 a:hover { text-decoration: underline; }
+        .product-meta { margin: 7px 0; color: #5b6472; }
+        .price { margin-top: 14px; font-size: 24px; font-weight: 800; color: #2d6a4f; }
+        .card-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+        .btn { display: inline-block; border: none; border-radius: 12px; padding: 11px 16px; font-weight: 800; text-decoration: none; cursor: pointer; font-size: 14px; }
+        .btn-primary { background: #2d6a4f; color: white; }
+        .btn-primary:hover { background: #1f4f3a; }
+        .btn-secondary { background: #edf7ef; color: #1b4332; }
+        .btn-secondary:hover { background: #dff0e3; }
+        .detail-hero { height: 280px; border-radius: 24px; margin-bottom: 22px; background: linear-gradient(to top, rgba(0,0,0,0.34), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat; box-shadow: 0 10px 28px rgba(0,0,0,0.14); }
+        .detail-card, .panel { background: white; border-radius: 22px; padding: 28px; border: 1px solid #ebefe7; box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+        .detail-card h1 { margin-top: 0; color: #1b4332; font-size: 38px; }
+        .detail-row { margin: 10px 0; color: #465061; font-size: 17px; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #1d4ed8; text-decoration: none; font-weight: 800; }
+        .back-link:hover { text-decoration: underline; }
+        .allergen-box { margin-top: 22px; padding: 16px; border-radius: 14px; background: #fff1f2; border-left: 6px solid #dc2626; }
+        .empty-state { background: white; border: 1px solid #ebefe7; border-radius: 18px; padding: 18px; color: #6b7280; box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
+        .info-panel { background: linear-gradient(135deg, #ffffff, #f8fbf8); border: 1px solid #ebefe7; border-radius: 18px; padding: 18px; margin-bottom: 24px; box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
+        .list-row { padding: 14px 0; border-bottom: 1px solid #e5e7eb; }
+        .list-row:last-child { border-bottom: none; }
+        .muted { color: #64748b; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.07); border: 1px solid #ebefe7; }
+        .stat-card h3 { margin: 0; font-size: 32px; color: #1b4332; }
+        .stat-card p { margin: 8px 0 0; color: #64748b; font-weight: 700; }
+        select, input[type="text"], input[type="password"], input[type="number"] { padding: 10px 12px; border-radius: 12px; border: 1px solid #cfd8cf; }
         @media (max-width: 760px) {
-            .hero {
-                min-height: 320px;
-                padding: 20px;
-            }
-
-            .hero-card h2 {
-                font-size: 30px;
-            }
-
-            .nav-wrap {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+            .hero { min-height: 320px; padding: 20px; }
+            .hero-card h1, .hero-card h2 { font-size: 30px; }
+            .nav-wrap { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -364,11 +85,15 @@
                     <a href="/my-orders/">My Orders</a>
                 {% endif %}
                 {% if user.role == "PRODUCER" %}
-                    <a href="/producer-orders/">Orders to Fulfil</a>
+                    <a href="/producer-orders/">Orders to Fulfil</a><a href="/producer/earnings/">My Earnings</a>
+                    <a href="/producer/add-product/">Add Product</a>
+                {% endif %}
+                {% if user.role == "ADMIN" or user.is_staff %}
+                    <a href="/dashboard/">Dashboard</a>
                 {% endif %}
                 <a href="/logout/">Logout</a>
             {% else %}
-                <a href="/login/">Login</a>
+                <a href="/login/">Login</a><a href="/register/customer/">Register Customer</a><a href="/register/producer/">Register Producer</a>
             {% endif %}
         </nav>
     </div>

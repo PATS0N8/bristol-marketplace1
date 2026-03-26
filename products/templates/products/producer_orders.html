@@ -3,19 +3,20 @@
 {% block title %}Orders to Fulfil | Bristol Marketplace{% endblock %}
 
 {% block content %}
-<h2>Orders to Fulfil</h2>
+<h2 class="section-title">Orders to Fulfil</h2>
 
+<div class="panel">
 {% for item in items %}
-    <div>
-        <p><strong>Order {{ item.order.id }}</strong></p>
-        <p>Customer: {{ item.order.customer.username }}</p>
-        <p>Product: {{ item.product.name }}</p>
-        <p>Quantity: {{ item.quantity }}</p>
-        <p>Price: £{{ item.price }}</p>
+    <div class="list-row">
+        <h3>Order {{ item.order.id }}</h3>
+        <p><strong>Customer:</strong> {{ item.order.customer.username }}</p>
+        <p><strong>Status:</strong> {{ item.order.status }}</p>
+        <p><strong>Product:</strong> {{ item.product.name }}</p>
+        <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+        <p><strong>Price:</strong> £{{ item.price }}</p>
     </div>
-    <hr>
 {% empty %}
-    <p>No orders to fulfil yet.</p>
+    <p class="muted">No orders to fulfil yet.</p>
 {% endfor %}
-
+</div>
 {% endblock %}
