@@ -263,15 +263,32 @@ def producer_orders(request):
     if getattr(request.user, "role", "") != "PRODUCER":
         return HttpResponseForbidden("Only producers can view fulfilment orders.")
 
-    items = OrderItem.objects.select_related(
-        "order",
-        "order__customer",
-        "product"
-    ).filter(
-        product__producer=request.user
-    ).order_by("-order__created_at")
+    orders = Order.objects.filter(
+        orderitem__product__producer=request.user
+    ).distinct().order_by("-created_at")
 
-    return render(request, "products/producer_orders.html", {"items": items})
+    if request.method == "POST":
+        order_id = request.POST.get("order_id")
+        status = request.POST.get("status")
+        notes = request.POST.get("notes", "").strip()
+
+        order = get_object_or_404(
+            Order.objects.filter(orderitem__product__producer=request.user).distinct(),
+            id=order_id
+        )
+        order.status = status
+        order.save()
+
+        OrderStatusHistory.objects.create(
+            order=order,
+            status=status,
+            updated_by=request.user,
+            notes=notes
+        )
+
+        return redirect("/producer-orders/")
+
+    return render(request, "products/producer_orders.html", {"orders": orders})
 
 @login_required
 def admin_dashboard(request):

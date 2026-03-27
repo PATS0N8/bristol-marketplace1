@@ -6,14 +6,51 @@
 <h2 class="section-title">Orders to Fulfil</h2>
 
 <div class="panel">
-{% for item in items %}
+{% for order in orders %}
     <div class="list-row">
-        <h3>Order {{ item.order.id }}</h3>
-        <p><strong>Customer:</strong> {{ item.order.customer.username }}</p>
-        <p><strong>Status:</strong> {{ item.order.status }}</p>
-        <p><strong>Product:</strong> {{ item.product.name }}</p>
-        <p><strong>Quantity:</strong> {{ item.quantity }}</p>
-        <p><strong>Price:</strong> £{{ item.price }}</p>
+        <h3>Order {{ order.id }}</h3>
+        <p><strong>Customer:</strong> {{ order.customer.username }}</p>
+        <p><strong>Current Status:</strong> {{ order.status }}</p>
+
+        <form method="post" style="margin: 12px 0;">
+            {% csrf_token %}
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+
+            <p>
+                <label><strong>Update Status</strong></label><br>
+                <select name="status">
+                    <option value="PAID" {% if order.status == "PAID" %}selected{% endif %}>Paid</option>
+                    <option value="PREPARING" {% if order.status == "PREPARING" %}selected{% endif %}>Preparing</option>
+                    <option value="DISPATCHED" {% if order.status == "DISPATCHED" %}selected{% endif %}>Dispatched</option>
+                    <option value="DELIVERED" {% if order.status == "DELIVERED" %}selected{% endif %}>Delivered</option>
+                </select>
+            </p>
+
+            <p>
+                <label><strong>Notes</strong></label><br>
+                <input type="text" name="notes" placeholder="Optional update note" style="width:100%; max-width:420px;">
+            </p>
+
+            <button class="btn btn-primary" type="submit">Update Status</button>
+        </form>
+
+        <h4>Items for this producer</h4>
+        <ul>
+            {% for item in order.orderitem_set.all %}
+                {% if item.product.producer == request.user %}
+                    <li>{{ item.product.name }} — {{ item.quantity }} × £{{ item.price }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+        <h4>Status Timeline</h4>
+        <ul>
+            {% for entry in order.status_history.all %}
+                <li>{{ entry.created_at }} — {{ entry.status }}{% if entry.notes %} — {{ entry.notes }}{% endif %}</li>
+            {% empty %}
+                <li>No updates yet.</li>
+            {% endfor %}
+        </ul>
     </div>
 {% empty %}
     <p class="muted">No orders to fulfil yet.</p>
