@@ -23,3 +23,4 @@ urlpatterns = [
     path("dashboard/", admin_dashboard, name="admin_dashboard"),
     path("dashboard/settlements/", admin_settlements, name="admin_settlements"),
 ]
+# Sprint 3 refinement
