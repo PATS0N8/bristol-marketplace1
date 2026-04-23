@@ -356,8 +356,8 @@ def producer_add_product(request):
                 allergens=request.POST.get("allergens", "").strip(),
             )
             return redirect("/")
-        except Exception:
-            error = "Could not create product. Check the form fields."
+        except Exception as e:
+            error = f"Could not create product: {e}"
 
     return render(request, "products/producer_add_product.html", {
         "categories": categories,
