@@ -37,6 +37,8 @@ class Product(models.Model):
         default=Availability.AVAILABLE
     )
     allergens = models.CharField(max_length=400, help_text="e.g., milk, eggs, nuts")
+    harvest_dates = models.DateField(null=True, blank=True)
+    best_before_date = models.DateField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

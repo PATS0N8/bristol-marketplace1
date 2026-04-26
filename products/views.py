@@ -354,6 +354,8 @@ def producer_add_product(request):
                 stock_qty=int(request.POST.get("stock_qty")),
                 availability=request.POST.get("availability", "IN_STOCK"),
                 allergens=request.POST.get("allergens", "").strip(),
+                harvest_date=request.POST.get("harvest_date") or None,
+                best_before_date=request.POST.get("best_before_date") or None
             )
             return redirect("/")
         except Exception as e:
