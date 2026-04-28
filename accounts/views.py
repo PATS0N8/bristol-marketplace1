@@ -13,7 +13,6 @@ def account_settings(request):
         request.user.email = request.POST.get("email", "").strip()
         request.user.save()
 
-        #If users role is producer fill profile options.
         if request.user.role == "PRODUCER":
             profile, _ = ProducerProfile.objects.get_or_create(user=request.user)
             profile.business_name = request.POST.get("business_name", "").strip()
@@ -22,11 +21,20 @@ def account_settings(request):
             profile.location = request.POST.get("location", "").strip()
             profile.save()
 
+        if request.user.role == "CUSTOMER":
+            from accounts.models import CustomerProfile
+            profile, _ = CustomerProfile.objects.get_or_create(user=request.user)
+            profile.delivery_postcode = request.POST.get("delivery_postcode", "").strip()
+            profile.save()
+
         success = True
 
     profile = None
     if request.user.role == "PRODUCER":
         profile, _ = ProducerProfile.objects.get_or_create(user=request.user)
+    elif request.user.role == "CUSTOMER":
+        from accounts.models import CustomerProfile
+        profile, _ = CustomerProfile.objects.get_or_create(user=request.user)
 
     return render(request, "products/account_settings.html", {
         "profile": profile,

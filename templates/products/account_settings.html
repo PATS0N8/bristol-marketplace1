@@ -17,6 +17,12 @@
             <label><strong>Email</strong></label><br>
             <input type="text" name="email" value="{{ user.email }}" style="width:100%;">
         </p>
+        {% if user.role == "CUSTOMER" and profile %}
+        <p>
+            <label><strong>Delivery Postcode</strong></label><br>
+            <input type="text" name="delivery_postcode" value="{{ profile.delivery_postcode }}" style="width:100%;" placeholder="e.g. BS1 4DJ">
+        </p>
+        {% endif %}
 
         {% if user.role == "PRODUCER" and profile %}
         <p>
