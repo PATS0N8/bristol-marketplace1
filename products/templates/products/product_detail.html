@@ -14,6 +14,9 @@
     <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
     <p class="detail-row"><strong>Stock:</strong> {{ product.stock_qty }}</p>
     <p class="detail-row"><strong>Availability:</strong> {{ product.availability }}</p>
+    {% if product.is_organic %}
+        <p class="detail-row"><strong>🌱 Organically Certified</strong></p>
+    {% endif %}
     {% if product.harvest_date %}
         <p class="detail-row"><strong>Harvest Date:</strong> {{ product.harvest_date }}</p>
     {% endif %}
@@ -30,7 +33,7 @@
         <strong>Allergen Information:</strong><br>
         {{ product.allergens|default:"None listed" }}
     </div> 
-    
+
     {% if product.producer.producer_profile.farm_story %}
     <div class="info-panel" style="margin-top: 22px;">
         <h3>About the Producer</h3>

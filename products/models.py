@@ -37,6 +37,8 @@ class Product(models.Model):
         default=Availability.AVAILABLE
     )
     allergens = models.CharField(max_length=400, help_text="e.g., milk, eggs, nuts")
+    #Bool field for organic certification
+    is_organic = models.BooleanField(default=False)
     harvest_dates = models.DateField(null=True, blank=True)
     best_before_date = models.DateField(null=True, blank=True)
 
