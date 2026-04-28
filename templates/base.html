@@ -91,6 +91,7 @@
                 {% if user.role == "ADMIN" or user.is_staff %}
                     <a href="/dashboard/">Dashboard</a>
                 {% endif %}
+                <a href="/account/">Account</a>
                 <a href="/logout/">Logout</a>
             {% else %}
                 <a href="/login/">Login</a><a href="/register/customer/">Register Customer</a><a href="/register/producer/">Register Producer</a>
