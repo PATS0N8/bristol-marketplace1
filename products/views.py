@@ -77,7 +77,7 @@ def register_producer(request):
 def home(request):
     categories = Category.objects.all().order_by("name")
     q = request.GET.get("q", "").strip()
-    products = Product.objects.select_related("category", "producer").order_by("-id")
+    products = Product.objects.select_related("category", "producer").filter(stock_qty__gt=0).order_by("-id")
     if q:
         products = products.filter(Q(name__icontains=q) | Q(description__icontains=q))
     return render(request, "products/home.html", {
@@ -92,7 +92,7 @@ def product_detail(request, product_id):
 
 def category_products(request, category_id):
     category = get_object_or_404(Category, id=category_id)
-    products = Product.objects.select_related("category", "producer").filter(category=category).order_by("-id")
+    products = Product.objects.select_related("category", "producer").filter(category=category, stock_qty__gt=0).order_by("-id")
     return render(request, "products/category_products.html", {
         "category": category,
         "products": products,

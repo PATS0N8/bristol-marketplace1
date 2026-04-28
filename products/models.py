@@ -11,8 +11,10 @@ class Category(models.Model):
 
 class Product(models.Model):
     class Availability(models.TextChoices):
-        AVAILABLE = "AVAILABLE", "Available"
-        UNAVAILABLE = "UNAVAILABLE", "Unavailable"
+        IN_STOCK = "IN_STOCK", "In Stock"
+        OUT_OF_STOCK = "OUT_OF_STOCK", "Out of Stock"
+        SEASONAL = "SEASONAL", "Seasonal"
+        LIMITED = "LIMITED", "Limited Stock"
 
     producer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -34,12 +36,12 @@ class Product(models.Model):
     availability = models.CharField(
         max_length=20,
         choices=Availability.choices,
-        default=Availability.AVAILABLE
+        default=Availability.IN_STOCK
     )
     allergens = models.CharField(max_length=400, help_text="e.g., milk, eggs, nuts")
     #Bool field for organic certification
     is_organic = models.BooleanField(default=False)
-    harvest_dates = models.DateField(null=True, blank=True)
+    harvest_date = models.DateField(null=True, blank=True)
     best_before_date = models.DateField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

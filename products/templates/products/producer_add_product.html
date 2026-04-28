@@ -47,13 +47,12 @@
             <input type="number" name="stock_qty" min="0" required style="width:100%;">
         </p>
 
-        <p>
-            <label><strong>Availability</strong></label><br>
-            <select name="availability" style="width:100%;">
-                <option value="AVAILABLE">Available</option>
-                <option value="UNAVAILABLE">Unavailable</option>
-            </select>
-        </p>
+       <select name="availability" style="width:100%;">
+            <option value="IN_STOCK">In Stock</option>
+            <option value="OUT_OF_STOCK">Out of Stock</option>
+            <option value="SEASONAL">Seasonal</option>
+            <option value="LIMITED">Limited Stock</option>
+        </select>
 
         <p>
             <label><strong>Allergens</strong></label><br>
