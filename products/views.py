@@ -351,6 +351,7 @@ def producer_add_product(request):
                 name=request.POST.get("name", "").strip(),
                 description=request.POST.get("description", "").strip(),
                 price_gbp=Decimal(request.POST.get("price_gbp")),
+                unit=request.POST.get("unit", "").strip(),
                 stock_qty=int(request.POST.get("stock_qty")),
                 availability=request.POST.get("availability", "IN_STOCK"),
                 allergens=request.POST.get("allergens", "").strip(),

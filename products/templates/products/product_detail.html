@@ -12,6 +12,7 @@
     <p class="detail-row"><strong>Producer:</strong> {{ product.producer.username }}</p>
     <p class="detail-row"><strong>Category:</strong> {{ product.category.name }}</p>
     <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
+    <p class="detail-row"><strong>Unit:</strong> {{ product.unit }}</p>
     <p class="detail-row"><strong>Stock:</strong> {{ product.stock_qty }}</p>
     <p class="detail-row"><strong>Availability:</strong> {{ product.availability }}</p>
     {% if product.is_organic %}
