@@ -29,7 +29,18 @@
     <div class="allergen-box">
         <strong>Allergen Information:</strong><br>
         {{ product.allergens|default:"None listed" }}
+    </div> 
+    
+    {% if product.producer.producer_profile.farm_story %}
+    <div class="info-panel" style="margin-top: 22px;">
+        <h3>About the Producer</h3>
+        <p><strong>{{ product.producer.producer_profile.business_name }}</strong></p>
+        {% if product.producer.producer_profile.location %}
+            <p>{{ product.producer.producer_profile.location }}</p>
+        {% endif %}
+        <p>{{ product.producer.producer_profile.farm_story }}</p>
     </div>
+    {% endif %}
 
     <div class="card-actions">
         <form method="post" action="{% url 'add_to_cart' product.id %}">
