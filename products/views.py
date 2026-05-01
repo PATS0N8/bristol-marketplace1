@@ -408,3 +408,58 @@ def producer_settlements(request):
         "total_payout": total_payout,
     })
 # Sprint 3 refinement
+
+import stripe
+from django.conf import settings
+from django.urls import reverse
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def create_checkout_session(request):
+    cart = request.session.get("cart", {})
+    line_items = []
+
+    for product_id, qty in cart.items():
+        product = Product.objects.get(id=product_id)
+        line_items.append({
+            'price_data': {
+                'currency': 'gbp',
+                'product_data': {
+                    'name': product.name,
+                },
+                'unit_amount': int(product.price_gbp * 100),
+            },
+            'quantity': qty,
+        })
+
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=line_items,
+        mode='payment',
+        success_url=request.build_absolute_uri('/payment-success/'),
+        cancel_url=request.build_absolute_uri('/cart/'),
+    )
+
+    return redirect(session.url)
+
+def payment_success(request):
+    cart = request.session.get("cart", {})
+
+    if not cart:
+        return redirect("home")
+
+    order = Order.objects.create(customer=request.user)
+
+    for product_id, qty in cart.items():
+        product = Product.objects.get(id=product_id)
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=qty,
+            price=product.price_gbp
+        )
+
+    request.session["cart"] = {}
+
+    return render(request, "products/checkout_success.html", {"order": order})
