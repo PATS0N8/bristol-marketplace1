@@ -169,7 +169,7 @@ def view_cart(request):
 
     for pid, qty in cart.items():
         product = Product.objects.select_related("producer", "category").get(id=pid)
-        subtotal = product.price_gbp * qty
+        subtotal = product.discounted_price() * qty
         total += subtotal
         item = {
             "product": product,
@@ -284,7 +284,7 @@ def payment(request):
                 order=order,
                 product=product,
                 quantity=qty,
-                price=product.price_gbp
+                price=product.discounted_price()
             )
             product.stock_qty -= qty
             if product.stock_qty < 0:
@@ -557,4 +557,141 @@ def add_storage_guide(request, product_id):
     return render(request, "products/add_storage_guide.html", {
         "product": product,
         "existing": existing,
+    })
+
+@login_required
+def admin_add_category(request):
+    if getattr(request.user, "role", "") != "ADMIN" and not request.user.is_staff:
+        return HttpResponseForbidden("Only admins can add categories.")
+    error = ""
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        if not name:
+            error = "Category name is required."
+        elif Category.objects.filter(name=name).exists():
+            error = "Category already exists."
+        else:
+            Category.objects.create(name=name)
+            return redirect("/dashboard/")
+    return render(request, "products/admin_add_category.html", {"error": error})
+
+@login_required
+def admin_add_user(request):
+    if getattr(request.user, "role", "") != "ADMIN" and not request.user.is_staff:
+        return HttpResponseForbidden("Only admins can add users.")
+    error = ""
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "").strip()
+        role = request.POST.get("role", "CUSTOMER")
+        if not username or not password:
+            error = "Username and password are required."
+        elif User.objects.filter(username=username).exists():
+            error = "Username already exists."
+        else:
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.role = role
+            user.save()
+            return redirect("/dashboard/")
+    return render(request, "products/admin_add_user.html", {"error": error})
+
+@login_required
+def admin_add_product(request):
+    if getattr(request.user, "role", "") != "ADMIN" and not request.user.is_staff:
+        return HttpResponseForbidden("Only admins can add products.")
+    categories = Category.objects.all().order_by("name")
+    producers = User.objects.filter(role="PRODUCER")
+    error = ""
+    if request.method == "POST":
+        try:
+            category = Category.objects.get(id=request.POST.get("category"))
+            producer = User.objects.get(id=request.POST.get("producer"))
+            Product.objects.create(
+                producer=producer,
+                category=category,
+                name=request.POST.get("name", "").strip(),
+                description=request.POST.get("description", "").strip(),
+                price_gbp=Decimal(request.POST.get("price_gbp").replace("£", "").strip()),
+                unit=request.POST.get("unit", "").strip(),
+                stock_qty=int(request.POST.get("stock_qty")),
+                availability=request.POST.get("availability", "IN_STOCK"),
+                allergens=request.POST.get("allergens", "").strip(),
+            )
+            return redirect("/dashboard/")
+        except Exception as e:
+            error = f"Could not create product: {e}"
+    return render(request, "products/admin_add_product.html", {
+        "categories": categories,
+        "producers": producers,
+        "error": error,
+    })
+
+@login_required
+def admin_generate_settlements(request):
+    if getattr(request.user, "role", "") != "ADMIN" and not request.user.is_staff:
+        return HttpResponseForbidden("Only admins can generate settlements.")
+
+    from orders.models import Settlement
+    from datetime import date, timedelta
+
+    # Week ending = this coming Sunday
+    today = date.today()
+    week_ending = today + timedelta(days=(6 - today.weekday()))
+
+    if request.method == "POST":
+        # Get all unpaid order items for the week
+        items = OrderItem.objects.select_related("order", "product__producer").filter(
+            order__created_at__date__lte=week_ending,
+        )
+
+        producer_totals = {}
+        for item in items:
+            producer = item.product.producer
+            if producer not in producer_totals:
+                producer_totals[producer] = Decimal("0.00")
+            producer_totals[producer] += item.price * item.quantity
+
+        created = 0
+        for producer, gross in producer_totals.items():
+            commission = gross * Decimal("0.05")
+            payout = gross * Decimal("0.95")
+            _, was_created = Settlement.objects.get_or_create(
+                producer=producer,
+                week_ending=week_ending,
+                defaults={
+                    "gross_amount": gross,
+                    "commission": commission,
+                    "payout": payout,
+                }
+            )
+            if was_created:
+                created += 1
+
+        return redirect("/dashboard/settlements/manage/")
+
+    return render(request, "products/admin_generate_settlements.html", {
+        "week_ending": week_ending,
+    })
+
+@login_required
+def admin_manage_settlements(request):
+    if getattr(request.user, "role", "") != "ADMIN" and not request.user.is_staff:
+        return HttpResponseForbidden("Only admins can manage settlements.")
+
+    from orders.models import Settlement
+    from django.utils import timezone
+
+    if request.method == "POST":
+        settlement_id = request.POST.get("settlement_id")
+        settlement = get_object_or_404(Settlement, id=settlement_id)
+        settlement.is_paid = True
+        settlement.paid_at = timezone.now()
+        settlement.notes = request.POST.get("notes", "").strip()
+        settlement.save()
+        return redirect("/dashboard/settlements/manage/")
+
+    settlements = Settlement.objects.select_related("producer").all()
+    return render(request, "products/admin_manage_settlements.html", {
+        "settlements": settlements,
     })

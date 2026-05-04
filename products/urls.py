@@ -25,6 +25,13 @@ urlpatterns = [
 
     path("product/<int:product_id>/add-recipe/", add_recipe, name="add_recipe"),
     path("product/<int:product_id>/add-storage/", add_storage_guide, name="add_storage_guide"),
+
+    path("dashboard/add-category/", admin_add_category, name="admin_add_category"),
+    path("dashboard/add-user/", admin_add_user, name="admin_add_user"),
+    path("dashboard/add-product/", admin_add_product, name="admin_add_product"),
+
+    path("dashboard/settlements/generate/", admin_generate_settlements, name="admin_generate_settlements"),
+    path("dashboard/settlements/manage/", admin_manage_settlements, name="admin_manage_settlements"),
 ]
 # Sprint 3 refinement
 

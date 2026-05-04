@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Manage Settlements | Bristol Marketplace{% endblock %}
+{% block content %}
+<h2 class="section-title">Manage Settlements</h2>
+
+<div class="card-actions" style="margin-bottom: 18px;">
+    <a class="btn btn-primary" href="/dashboard/settlements/generate/">Generate This Week's Settlements</a>
+    <a class="btn btn-secondary" href="/dashboard/">Back to Dashboard</a>
+</div>
+
+<div class="panel">
+{% for settlement in settlements %}
+    <div class="list-row">
+        <p><strong>{{ settlement.producer.username }}</strong> — Week ending {{ settlement.week_ending }}</p>
+        <p>Gross: £{{ settlement.gross_amount }} | Commission: £{{ settlement.commission }} | Payout: £{{ settlement.payout }}</p>
+        <p>Status: 
+            {% if settlement.is_paid %}
+                <span style="color:#16a34a; font-weight:bold;">Paid</span> — {{ settlement.paid_at }}
+                {% if settlement.notes %} — {{ settlement.notes }}{% endif %}
+            {% else %}
+                <span style="color:#dc2626; font-weight:bold;">Unpaid</span>
+            {% endif %}
+        </p>
+        {% if not settlement.is_paid %}
+        <form method="post" style="margin-top: 8px;">
+            {% csrf_token %}
+            <input type="hidden" name="settlement_id" value="{{ settlement.id }}">
+            <input type="text" name="notes" placeholder="Optional payment notes" style="width: 280px;">
+            <button class="btn btn-primary" type="submit">Mark as Paid</button>
+        </form>
+        {% endif %}
+    </div>
+{% empty %}
+    <p class="muted">No settlements generated yet.</p>
+{% endfor %}
+</div>
+{% endblock %}

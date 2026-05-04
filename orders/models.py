@@ -52,3 +52,20 @@ class OrderStatusHistory(models.Model):
     def __str__(self):
         return f"Order {self.order.id} -> {self.status}"
 # Sprint 3 refinement
+
+class Settlement(models.Model):
+    producer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="settlements")
+    week_ending = models.DateField()
+    gross_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    commission = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    payout = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    is_paid = models.BooleanField(default=False)
+    paid_at = models.DateTimeField(null=True, blank=True)
+    notes = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-week_ending"]
+
+    def __str__(self):
+        return f"Settlement for {self.producer.username} week ending {self.week_ending}"

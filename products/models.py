@@ -78,3 +78,4 @@ class StorageGuide(models.Model):
 
     def __str__(self):
         return f"Storage guide for {self.product.name}"
+        

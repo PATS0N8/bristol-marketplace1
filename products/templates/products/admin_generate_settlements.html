@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Generate Settlements | Bristol Marketplace{% endblock %}
+{% block content %}
+<h2 class="section-title">Generate Weekly Settlements</h2>
+<div class="panel" style="max-width: 600px;">
+    <p>This will generate settlement records for all producers for the week ending <strong>{{ week_ending }}</strong>.</p>
+    <p class="muted">Settlements already generated for this week will not be duplicated.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">Generate Settlements</button>
+        <a class="btn btn-secondary" href="/dashboard/">Cancel</a>
+    </form>
+</div>
+{% endblock %}
