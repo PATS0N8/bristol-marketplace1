@@ -44,6 +44,16 @@
         <p>
             <label><strong>Price</strong></label><br>
             <input type="text" name="price_gbp" required style="width:100%;">
+            {% if product.is_surplus and product.discount_percent > 0 %}
+        <p class="detail-row">
+            <strong>Price:</strong>
+            <span style="text-decoration: line-through; color: #9ca3af;">£{{ product.price_gbp }}</span>
+            <span style="color: #dc2626; font-weight: bold;">£{{ product.discounted_price }}</span>
+            <span style="background:#fef2f2; color:#dc2626; padding: 2px 8px; border-radius: 8px; font-size:13px;">{{ product.discount_percent }}% OFF — Surplus</span>
+        </p>
+            {% else %}
+            <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
+            {% endif %}
         </p>
 
         <p>
@@ -63,6 +73,15 @@
         <p>
             <label><strong>Allergens</strong></label><br>
             <input type="text" name="allergens" style="width:100%;">
+        </p>
+        <p>
+            <label><strong>Surplus Produce</strong></label><br>
+            <input type="checkbox" name="is_surplus"> Mark as surplus / last-minute discount
+        </p>
+
+        <p>
+            <label><strong>Discount Percentage</strong></label><br>
+            <input type="number" name="discount_percent" min="0" max="100" value="0" style="width:100%;" placeholder="e.g. 20 for 20% off">
         </p>
 
         <button class="btn btn-primary" type="submit">Create Product</button>

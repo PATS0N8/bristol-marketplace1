@@ -32,6 +32,14 @@
         <p class="detail-row"><strong>Best Before:</strong> {{ product.best_before_date }}</p>
     {% endif %}
 
+    {% if product.is_surplus and product.discount_percent > 0 %}
+        <span style="text-decoration: line-through; color: #9ca3af;">£{{ product.price_gbp }}</span>
+        <span style="color: #dc2626; font-weight: bold;">£{{ product.discounted_price }}</span>
+        <span style="background:#fef2f2; color:#dc2626; padding: 2px 8px; border-radius: 8px; font-size:13px;">{{ product.discount_percent }}% OFF — Surplus</span>
+    {% else %}
+        <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
+    {% endif %}
+
     <div class="info-panel">
         <h3>Description</h3>
         <p>{{ product.description|default:"No description available." }}</p>
@@ -41,6 +49,16 @@
         <strong>Allergen Information:</strong><br>
         {{ product.allergens|default:"None listed" }}
     </div> 
+
+    {% if food_miles is not None %}
+        <div class="info-panel" style="margin-top: 22px;">
+            <p><strong>Food Miles:</strong> This product is approximately <strong>{{ food_miles }} miles</strong> from your delivery address.</p>
+        </div>
+    {% elif user.is_authenticated and user.role == "CUSTOMER" %}
+        <div class="info-panel" style="margin-top: 22px;">
+            <p class="muted">Add your delivery postcode in <a href="/account/">account settings</a> to see food miles.</p>
+        </div>
+    {% endif %}
 
     {% if product.producer.producer_profile.farm_story %}
     <div class="info-panel" style="margin-top: 22px;">

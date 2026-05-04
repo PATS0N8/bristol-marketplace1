@@ -6,8 +6,31 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Product
 from orders.models import Order, OrderItem, OrderStatusHistory
+import requests as http_requests
 
 User = get_user_model()
+
+def get_postcode_coords(postcode):
+    try:
+        cleaned = postcode.strip().replace(" ", "").upper()
+        response = http_requests.get(f"https://api.postcodes.io/postcodes/{cleaned}", timeout=5)
+        data = response.json()
+        if data["status"] == 200:
+            return data["result"]["latitude"], data["result"]["longitude"]
+        else:
+            print("Postcode API error:", data)
+    except Exception as e:
+        print("Postcode lookup exception:", e)
+    return None, None
+
+def calculate_distance_miles(lat1, lon1, lat2, lon2):
+    from math import radians, sin, cos, sqrt, atan2
+    R = 3958.8  # Earth radius in miles
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    return R * 2 * atan2(sqrt(a), sqrt(1-a))
 
 def custom_login(request):
     error = ""
@@ -88,7 +111,33 @@ def home(request):
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product.objects.select_related("category", "producer"), id=product_id)
-    return render(request, "products/product_detail.html", {"product": product})
+    
+    food_miles = None
+    if request.user.is_authenticated and request.user.role == "CUSTOMER":
+        try:
+            from accounts.models import CustomerProfile, ProducerProfile
+            customer_profile = CustomerProfile.objects.get(user=request.user)
+            producer_profile = ProducerProfile.objects.get(user=product.producer)
+            
+            print("Customer postcode:", customer_profile.delivery_postcode)
+            print("Producer postcode:", producer_profile.postcode)
+            
+            clat, clon = get_postcode_coords(customer_profile.delivery_postcode)
+            plat, plon = get_postcode_coords(producer_profile.postcode)
+            
+            print("Customer coords:", clat, clon)
+            print("Producer coords:", plat, plon)
+            
+            if clat and plat:
+                food_miles = round(calculate_distance_miles(clat, clon, plat, plon), 1)
+                print("Food miles:", food_miles)
+        except Exception as e:
+            print("Food miles error:", e)
+
+    return render(request, "products/product_detail.html", {
+        "product": product,
+        "food_miles": food_miles,
+    })
 
 def category_products(request, category_id):
     category = get_object_or_404(Category, id=category_id)
@@ -358,6 +407,8 @@ def producer_add_product(request):
                 harvest_date=request.POST.get("harvest_date") or None,
                 best_before_date=request.POST.get("best_before_date") or None,
                 is_organic=request.POST.get("is_organic") == "on",
+                is_surplus=request.POST.get("is_surplus") == "on",
+                discount_percent=int(request.POST.get("discount_percent", 0)),
             )
             return redirect("/")
         except Exception as e:

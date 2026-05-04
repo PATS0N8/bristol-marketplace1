@@ -77,5 +77,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://0.0.0.0:8000", "http://127.0.0.1:8000"]
+
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")

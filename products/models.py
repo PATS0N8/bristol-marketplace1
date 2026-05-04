@@ -8,7 +8,6 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
 class Product(models.Model):
     class Availability(models.TextChoices):
         IN_STOCK = "IN_STOCK", "In Stock"
@@ -41,10 +40,20 @@ class Product(models.Model):
     allergens = models.CharField(max_length=400, help_text="e.g., milk, eggs, nuts")
     #Bool field for organic certification
     is_organic = models.BooleanField(default=False)
+    is_surplus = models.BooleanField(default=False)
+    discount_percent = models.PositiveIntegerField(default=0, help_text="Discount percentage e.g. 20 for 20%")
     harvest_date = models.DateField(null=True, blank=True)
     best_before_date = models.DateField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+    def discounted_price(self):
+        if self.is_surplus and self.discount_percent > 0:
+            from decimal import Decimal
+            discount = self.price_gbp * Decimal(self.discount_percent) / Decimal(100)
+            return self.price_gbp - discount
+        return self.price_gbp
 
     def __str__(self):
         return self.name
