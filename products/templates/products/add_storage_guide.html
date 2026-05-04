@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Storage Guide | Bristol Marketplace{% endblock %}
+{% block content %}
+<h2 class="section-title">Storage Guide for {{ product.name }}</h2>
+<div class="panel" style="max-width: 760px;">
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label><strong>Storage Guidance</strong></label><br>
+            <textarea name="guidance" rows="6" style="width:100%; padding:10px; border-radius:12px; border:1px solid #cfd8cf;">{{ existing.guidance|default:"" }}</textarea>
+        </p>
+        <button class="btn btn-primary" type="submit">Save Storage Guide</button>
+    </form>
+</div>
+{% endblock %}

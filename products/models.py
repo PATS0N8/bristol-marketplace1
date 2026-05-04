@@ -37,6 +37,7 @@ class Product(models.Model):
         choices=Availability.choices,
         default=Availability.IN_STOCK
     )
+    available_from = models.DateField(null=True, blank=True, help_text="Date from which this product is available for collection/delivery")
     allergens = models.CharField(max_length=400, help_text="e.g., milk, eggs, nuts")
     #Bool field for organic certification
     is_organic = models.BooleanField(default=False)
@@ -57,3 +58,23 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class Recipe(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="recipes")
+    title = models.CharField(max_length=200)
+    ingredients = models.TextField()
+    instructions = models.TextField()
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class StorageGuide(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="storage_guide")
+    guidance = models.TextField()
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Storage guide for {self.product.name}"

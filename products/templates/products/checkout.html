@@ -4,6 +4,17 @@
 
 {% block content %}
 <h2 class="section-title">Checkout</h2>
+{% if lead_time_errors %}
+    <div style="background:#fef2f2; border-left: 5px solid #dc2626; padding: 14px; border-radius: 12px; margin-bottom: 18px;">
+        <strong>Some items require more lead time:</strong>
+        <ul>
+            {% for error in lead_time_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        <p>Please remove these items or wait until they are available before checking out.</p>
+    </div>
+{% endif %}
 
 <div class="panel">
     {% for producer_name, producer_items in grouped.items %}
@@ -18,9 +29,11 @@
 
     <h3>Total: £{{ total }}</h3>
 
-    <div class="card-actions">
+    {% if lead_time_errors %}
         <a class="btn btn-secondary" href="/cart/">Back to Cart</a>
-        <a class="btn btn-primary" href="/create-checkout-session/">Continue to Payment</a>
-    </div>
+    {% else %}
+        <a class="btn btn-secondary" href="/cart/">Back to Cart</a>
+        <a class="btn btn-primary" href="/payment/">Continue to Payment</a>
+    {% endif %}
 </div>
 {% endblock %}

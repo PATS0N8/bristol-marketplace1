@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Product
 from orders.models import Order, OrderItem, OrderStatusHistory
 import requests as http_requests
+from datetime import date, timedelta
 
 User = get_user_model()
 
@@ -220,6 +221,8 @@ def checkout(request):
     items = []
     total = Decimal("0.00")
     grouped = {}
+    lead_time_errors = []
+    earliest_order = date.today() + timedelta(hours=48)
 
     for pid, qty in cart.items():
         product = Product.objects.select_related("producer", "category").get(id=pid)
@@ -231,15 +234,17 @@ def checkout(request):
             "subtotal": subtotal
         }
         items.append(item)
+        grouped.setdefault(product.producer.username, [])
+        grouped[product.producer.username].append(item)
 
-        producer_key = product.producer.username
-        grouped.setdefault(producer_key, [])
-        grouped[producer_key].append(item)
+        if product.available_from and product.available_from > earliest_order:
+            lead_time_errors.append(f"{product.name} is not available until {product.available_from.strftime('%d %b %Y')}.")
 
     return render(request, "products/checkout.html", {
         "items": items,
         "grouped": grouped,
-        "total": total
+        "total": total,
+        "lead_time_errors": lead_time_errors,
     })
 
 @login_required
@@ -409,6 +414,7 @@ def producer_add_product(request):
                 is_organic=request.POST.get("is_organic") == "on",
                 is_surplus=request.POST.get("is_surplus") == "on",
                 discount_percent=int(request.POST.get("discount_percent", 0)),
+                available_from=request.POST.get("available_from") or None,
             )
             return redirect("/")
         except Exception as e:
@@ -514,3 +520,41 @@ def payment_success(request):
     request.session["cart"] = {}
 
     return render(request, "products/checkout_success.html", {"order": order})
+
+@login_required
+def add_recipe(request, product_id):
+    product = get_object_or_404(Product, id=product_id, producer=request.user)
+
+    if request.method == "POST":
+        from .models import Recipe
+        Recipe.objects.create(
+            product=product,
+            title=request.POST.get("title", "").strip(),
+            ingredients=request.POST.get("ingredients", "").strip(),
+            instructions=request.POST.get("instructions", "").strip(),
+            created_by=request.user,
+        )
+        return redirect(f"/product/{product_id}/")
+
+    return render(request, "products/add_recipe.html", {"product": product})
+
+@login_required
+def add_storage_guide(request, product_id):
+    product = get_object_or_404(Product, id=product_id, producer=request.user)
+
+    if request.method == "POST":
+        from .models import StorageGuide
+        StorageGuide.objects.update_or_create(
+            product=product,
+            defaults={
+                "guidance": request.POST.get("guidance", "").strip(),
+                "created_by": request.user,
+            }
+        )
+        return redirect(f"/product/{product_id}/")
+
+    existing = getattr(product, "storage_guide", None)
+    return render(request, "products/add_storage_guide.html", {
+        "product": product,
+        "existing": existing,
+    })

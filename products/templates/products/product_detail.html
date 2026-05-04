@@ -9,69 +9,98 @@
 
 <div class="detail-card">
     <h1>{{ product.name|title }}</h1>
-    <p class="detail-row"><strong>Producer:</strong> {{ product.producer.username }}</p>
-    <p class="detail-row"><strong>Category:</strong> {{ product.category.name }}</p>
-    <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
-    <p class="detail-row"><strong>Unit:</strong> {{ product.unit }}</p>
-    <p class="detail-row"><strong>Stock:</strong> {{ product.stock_qty }}</p>
-    <p class="detail-row">
-        <strong>Availability:</strong>
-        {% if product.availability == "IN_STOCK" %}In Stock
-        {% elif product.availability == "SEASONAL" %}Seasonal
-        {% elif product.availability == "LIMITED" %}Limited Stock
-        {% else %}Out of Stock
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-bottom: 16px;">
+        <p class="detail-row" style="margin:4px 0;"><strong>Producer:</strong> {{ product.producer.username }}</p>
+        <p class="detail-row" style="margin:4px 0;"><strong>Category:</strong> {{ product.category.name }}</p>
+        <p class="detail-row" style="margin:4px 0;"><strong>Unit:</strong> {{ product.unit }}</p>
+        <p class="detail-row" style="margin:4px 0;"><strong>Stock:</strong> {{ product.stock_qty }}</p>
+        <p class="detail-row" style="margin:4px 0;">
+            <strong>Availability:</strong>
+            {% if product.availability == "IN_STOCK" %}In Stock
+            {% elif product.availability == "SEASONAL" %}Seasonal
+            {% elif product.availability == "LIMITED" %}Limited Stock
+            {% else %}Out of Stock
+            {% endif %}
+        </p>
+        {% if product.is_organic %}
+            <p class="detail-row" style="margin:4px 0;"><strong>Organically Certified</strong></p>
         {% endif %}
-    </p>
-    {% if product.is_organic %}
-        <p class="detail-row"><strong>Organically Certified</strong></p>
-    {% endif %}
-    {% if product.harvest_date %}
-        <p class="detail-row"><strong>Harvest Date:</strong> {{ product.harvest_date }}</p>
-    {% endif %}
-    {% if product.best_before_date %}
-        <p class="detail-row"><strong>Best Before:</strong> {{ product.best_before_date }}</p>
-    {% endif %}
-
-    {% if product.is_surplus and product.discount_percent > 0 %}
-        <span style="text-decoration: line-through; color: #9ca3af;">£{{ product.price_gbp }}</span>
-        <span style="color: #dc2626; font-weight: bold;">£{{ product.discounted_price }}</span>
-        <span style="background:#fef2f2; color:#dc2626; padding: 2px 8px; border-radius: 8px; font-size:13px;">{{ product.discount_percent }}% OFF — Surplus</span>
-    {% else %}
-        <p class="detail-row"><strong>Price:</strong> £{{ product.price_gbp }}</p>
-    {% endif %}
-
-    <div class="info-panel">
-        <h3>Description</h3>
-        <p>{{ product.description|default:"No description available." }}</p>
+        {% if product.harvest_date %}
+            <p class="detail-row" style="margin:4px 0;"><strong>Harvest Date:</strong> {{ product.harvest_date }}</p>
+        {% endif %}
+        {% if product.best_before_date %}
+            <p class="detail-row" style="margin:4px 0;"><strong>Best Before:</strong> {{ product.best_before_date }}</p>
+        {% endif %}
     </div>
 
-    <div class="allergen-box">
-        <strong>Allergen Information:</strong><br>
-        {{ product.allergens|default:"None listed" }}
-    </div> 
+    {% if product.is_surplus and product.discount_percent > 0 %}
+        <p class="detail-row" style="margin-bottom:16px;">
+            <strong>Price:</strong>
+            <span style="text-decoration: line-through; color: #9ca3af;">£{{ product.price_gbp }}</span>
+            <span style="color: #dc2626; font-weight: bold;">£{{ product.discounted_price }}</span>
+            <span style="background:#fef2f2; color:#dc2626; padding: 2px 8px; border-radius: 8px; font-size:13px;">{{ product.discount_percent }}% OFF — Surplus</span>
+        </p>
+    {% else %}
+        <p class="detail-row" style="margin-bottom:16px;"><strong>Price:</strong> £{{ product.price_gbp }}</p>
+    {% endif %}
+
+    <div class="info-panel" style="padding: 12px 16px; margin-bottom: 12px;">
+        <strong>Description</strong>
+        <p style="margin: 6px 0 0;">{{ product.description|default:"No description available." }}</p>
+    </div>
+
+    <div class="allergen-box" style="padding: 10px 14px; margin-bottom: 12px;">
+        <strong>Allergen Information:</strong> {{ product.allergens|default:"None listed" }}
+    </div>
 
     {% if food_miles is not None %}
-        <div class="info-panel" style="margin-top: 22px;">
-            <p><strong>Food Miles:</strong> This product is approximately <strong>{{ food_miles }} miles</strong> from your delivery address.</p>
+        <div class="info-panel" style="padding: 10px 16px; margin-bottom: 12px;">
+            <p style="margin:0;"><strong>Food Miles:</strong> Approximately <strong>{{ food_miles }} miles</strong> from your delivery address.</p>
         </div>
     {% elif user.is_authenticated and user.role == "CUSTOMER" %}
-        <div class="info-panel" style="margin-top: 22px;">
-            <p class="muted">Add your delivery postcode in <a href="/account/">account settings</a> to see food miles.</p>
+        <div class="info-panel" style="padding: 10px 16px; margin-bottom: 12px;">
+            <p class="muted" style="margin:0;">Add your delivery postcode in <a href="/account/">account settings</a> to see food miles.</p>
         </div>
     {% endif %}
 
     {% if product.producer.producer_profile.farm_story %}
-    <div class="info-panel" style="margin-top: 22px;">
-        <h3>About the Producer</h3>
-        <p><strong>{{ product.producer.producer_profile.business_name }}</strong></p>
-        {% if product.producer.producer_profile.location %}
-            <p>{{ product.producer.producer_profile.location }}</p>
-        {% endif %}
-        <p>{{ product.producer.producer_profile.farm_story }}</p>
+    <div class="info-panel" style="padding: 12px 16px; margin-bottom: 12px;">
+        <strong>About the Producer</strong>
+        <p style="margin: 4px 0 2px;"><strong>{{ product.producer.producer_profile.business_name }}</strong>{% if product.producer.producer_profile.location %} — {{ product.producer.producer_profile.location }}{% endif %}</p>
+        <p style="margin: 4px 0 0;">{{ product.producer.producer_profile.farm_story }}</p>
     </div>
     {% endif %}
 
-    <div class="card-actions">
+    {% if product.storage_guide %}
+    <div class="info-panel" style="padding: 12px 16px; margin-bottom: 12px;">
+        <strong>Storage Guidance</strong>
+        <p style="margin: 6px 0 0;">{{ product.storage_guide.guidance }}</p>
+    </div>
+    {% endif %}
+
+    {% if product.recipes.all %}
+    <div class="info-panel" style="padding: 12px 16px; margin-bottom: 12px;">
+        <strong>Recipes</strong>
+            {% for recipe in product.recipes.all %}
+                <div style="margin-top: 10px;">
+                <p style="margin: 0 0 6px;"><strong>{{ recipe.title }}</strong></p>
+                <p style="margin: 0 0 4px;"><strong>Ingredients:</strong></p>
+                <p style="margin: 0 0 6px; white-space: pre-line;">{{ recipe.ingredients }}</p>
+                <p style="margin: 0 0 4px;"><strong>Instructions:</strong></p>
+                <p style="margin: 0; white-space: pre-line;">{{ recipe.instructions }}</p>
+            {% if not forloop.last %}
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 10px 0;">{% endif %}
+    </div>
+{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="card-actions" style="margin-top: 16px;">
+        {% if user.is_authenticated and user.role == "PRODUCER" and product.producer == user %}
+            <a class="btn btn-secondary" href="/product/{{ product.id }}/add-recipe/">Add Recipe</a>
+            <a class="btn btn-secondary" href="/product/{{ product.id }}/add-storage/">Add Storage Guide</a>
+        {% endif %}
         <form method="post" action="{% url 'add_to_cart' product.id %}">
             {% csrf_token %}
             <button class="btn btn-primary" type="submit">Add to Cart</button>
