@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="section-title">Settlements</h2>
+
+<div class="panel">
+{% for row in rows %}
+    <div class="list-row">
+        <p><strong>Order:</strong> {{ row.order.id }}</p>
+        <p><strong>Producer:</strong> {{ row.producer.username }}</p>
+        <p><strong>Product:</strong> {{ row.product.name }}</p>
+        <p><strong>Quantity:</strong> {{ row.quantity }}</p>
+        <p><strong>Gross:</strong> £{{ row.gross }}</p>
+        <p><strong>Commission 5%:</strong> £{{ row.commission }}</p>
+        <p><strong>Producer payout 95%:</strong> £{{ row.payout }}</p>
+    </div>
+{% empty %}
+    <p>No settlement rows found.</p>
+{% endfor %}
+</div>
+{% endblock %}

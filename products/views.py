@@ -493,8 +493,8 @@ def create_checkout_session(request):
         payment_method_types=['card'],
         line_items=line_items,
         mode='payment',
-        success_url=request.build_absolute_uri('/payment-success/'),
-        cancel_url=request.build_absolute_uri('/cart/'),
+        success_url="http://127.0.0.1:8000/payment-success/?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url="http://127.0.0.1:8000/cart/",
     )
 
     return redirect(session.url)
@@ -695,3 +695,32 @@ def admin_manage_settlements(request):
     return render(request, "products/admin_manage_settlements.html", {
         "settlements": settlements,
     })
+@login_required
+def settlements_debug_all(request):
+    from decimal import Decimal
+    from orders.models import OrderItem
+
+    if not (getattr(request.user, "role", "") == "ADMIN" or request.user.is_staff or getattr(request.user, "role", "") == "PRODUCER"):
+        return HttpResponseForbidden("Not allowed.")
+
+    items = OrderItem.objects.select_related("order", "product", "product__producer").all()
+
+    if getattr(request.user, "role", "") == "PRODUCER":
+        items = items.filter(product__producer=request.user)
+
+    rows = []
+    for item in items:
+        gross = item.price * item.quantity
+        commission = gross * Decimal("0.05")
+        payout = gross * Decimal("0.95")
+        rows.append({
+            "order": item.order,
+            "producer": item.product.producer,
+            "product": item.product,
+            "quantity": item.quantity,
+            "gross": gross,
+            "commission": commission,
+            "payout": payout,
+        })
+
+    return render(request, "products/settlements_debug_all.html", {"rows": rows})
