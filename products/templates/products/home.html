@@ -45,14 +45,30 @@
                 <p class="product-meta"><strong>Producer:</strong> {{ product.producer.username }}</p>
                 <p class="product-meta"><strong>Category:</strong> {{ product.category.name }}</p>
                 <p class="product-meta"><strong>Stock:</strong> {{ product.stock_qty }}</p>
-                {% if product.is_surplus and product.discount_percent > 0 %}
+                {% if product.has_active_discount %}
                     <p class="price">
-                        <span style="text-decoration: line-through; color: #9ca3af; font-size:16px;">£{{ product.price_gbp }}</span>
+                        <span style="text-decoration: line-through; color: #9ca3af; font-size:16px;">{% if product.active_discount_percent %}
+                <span style="text-decoration: line-through; color:#6b7280;">£{{ product.price_gbp }}</span>
+                <strong style="color:#dc2626;">£{{ product.active_discount_price }}</strong>
+                <span style="background:#fef2f2; color:#dc2626; padding:2px 8px; border-radius:8px; font-size:13px;">
+                    {{ product.active_discount_percent }}% OFF
+                </span>
+            {% else %}
+                £{{ product.price_gbp }}
+            {% endif %}</span>
                         £{{ product.discounted_price }}
                         <span style="background:#fef2f2; color:#dc2626; padding: 2px 8px; border-radius: 8px; font-size:12px;">{{ product.discount_percent }}% OFF</span>
                     </p>
                 {% else %}
-                    <p class="price">£{{ product.price_gbp }}</p>
+                    <p class="price">{% if product.active_discount_percent %}
+                <span style="text-decoration: line-through; color:#6b7280;">£{{ product.price_gbp }}</span>
+                <strong style="color:#dc2626;">£{{ product.active_discount_price }}</strong>
+                <span style="background:#fef2f2; color:#dc2626; padding:2px 8px; border-radius:8px; font-size:13px;">
+                    {{ product.active_discount_percent }}% OFF
+                </span>
+            {% else %}
+                £{{ product.price_gbp }}
+            {% endif %}</p>
                 {% endif %}
                 <div class="card-actions">
                     <a class="btn btn-secondary" href="{% url 'product_detail' product.id %}">View Details</a>

@@ -1,3 +1,17 @@
+
+def update_surplus_discount_status(product):
+    if not hasattr(product, "stock_qty"):
+        return product
+
+    if hasattr(product, "discount_remove_threshold") and product.stock_qty <= product.discount_remove_threshold:
+        product.is_surplus = False
+        product.discount_percent = 0
+
+    elif hasattr(product, "overstock_threshold") and product.stock_qty >= product.overstock_threshold:
+        product.is_surplus = True
+
+    return product
+
 from decimal import Decimal
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -281,7 +295,6 @@ def payment(request):
         for pid, qty in cart.items():
             product = Product.objects.get(id=pid)
             OrderItem.objects.create(
-                order=order,
                 product=product,
                 quantity=qty,
                 price=product.discounted_price()
@@ -291,7 +304,6 @@ def payment(request):
                 product.stock_qty = 0
             product.save()
         OrderStatusHistory.objects.create(
-            order=order,
             status="PAID",
             updated_by=request.user,
             notes="Order placed and payment completed."
@@ -334,7 +346,6 @@ def producer_orders(request):
         order.save()
 
         OrderStatusHistory.objects.create(
-            order=order,
             status=status,
             updated_by=request.user,
             notes=notes
@@ -412,8 +423,10 @@ def producer_add_product(request):
                 harvest_date=request.POST.get("harvest_date") or None,
                 best_before_date=request.POST.get("best_before_date") or None,
                 is_organic=request.POST.get("is_organic") == "on",
-                is_surplus=request.POST.get("is_surplus") == "on",
+                is_surplus=bool(int(request.POST.get("discount_percent", 0))) and int(request.POST.get("stock_qty", 0)) >= int(request.POST.get("overstock_threshold", 20)),
                 discount_percent=int(request.POST.get("discount_percent", 0)),
+                overstock_threshold=int(request.POST.get("overstock_threshold", 20)),
+                discount_remove_threshold=int(request.POST.get("discount_remove_threshold", 5)),
                 available_from=request.POST.get("available_from") or None,
             )
             return redirect("/")
@@ -472,55 +485,42 @@ from django.urls import reverse
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+@login_required
 def create_checkout_session(request):
+    import stripe
+    from django.conf import settings
+
+    stripe.api_key = settings.STRIPE_SECRET_KEY
     cart = request.session.get("cart", {})
+
+    if not cart:
+        return redirect("view_cart")
+
     line_items = []
 
     for product_id, qty in cart.items():
         product = Product.objects.get(id=product_id)
+
         line_items.append({
-            'price_data': {
-                'currency': 'gbp',
-                'product_data': {
-                    'name': product.name,
+            "price_data": {
+                "currency": "gbp",
+                "product_data": {
+                    "name": product.name,
                 },
-                'unit_amount': int(product.price_gbp * 100),
+                "unit_amount": int(product.price_gbp * 100),
             },
-            'quantity': qty,
+            "quantity": int(qty),
         })
 
     session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
+        payment_method_types=["card"],
         line_items=line_items,
-        mode='payment',
+        mode="payment",
         success_url="http://127.0.0.1:8000/payment-success/?session_id={CHECKOUT_SESSION_ID}",
         cancel_url="http://127.0.0.1:8000/cart/",
     )
 
     return redirect(session.url)
-
-def payment_success(request):
-    cart = request.session.get("cart", {})
-
-    if not cart:
-        return redirect("home")
-
-    order = Order.objects.create(customer=request.user)
-
-    for product_id, qty in cart.items():
-        product = Product.objects.get(id=product_id)
-
-        OrderItem.objects.create(
-            order=order,
-            product=product,
-            quantity=qty,
-            price=product.price_gbp
-        )
-
-    request.session["cart"] = {}
-
-    return render(request, "products/checkout_success.html", {"order": order})
-
 @login_required
 def add_recipe(request, product_id):
     product = get_object_or_404(Product, id=product_id, producer=request.user)
@@ -724,3 +724,36 @@ def settlements_debug_all(request):
         })
 
     return render(request, "products/settlements_debug_all.html", {"rows": rows})
+
+@login_required
+def payment_success(request):
+    cart = request.session.get("cart", {})
+
+    if not cart:
+        return redirect("home")
+
+    order = Order.objects.create(customer=request.user)
+
+    for product_id, qty in cart.items():
+        product = Product.objects.get(id=product_id)
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=int(qty),
+            price=product.price_gbp
+        )
+
+        if hasattr(product, "stock_qty"):
+            product.stock_qty = max(product.stock_qty - int(qty), 0)
+
+        if hasattr(product, "discount_remove_threshold"):
+            if product.stock_qty <= product.discount_remove_threshold:
+                product.discount_percent = 0
+                product.is_surplus = False
+
+        product.save()
+
+    request.session["cart"] = {}
+
+    return render(request, "products/checkout_success.html", {"order": order})

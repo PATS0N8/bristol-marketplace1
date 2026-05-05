@@ -43,6 +43,9 @@ class Product(models.Model):
     is_organic = models.BooleanField(default=False)
     is_surplus = models.BooleanField(default=False)
     discount_percent = models.PositiveIntegerField(default=0, help_text="Discount percentage e.g. 20 for 20%")
+    overstock_threshold = models.PositiveIntegerField(default=20, help_text="Stock level where surplus discount can apply")
+    discount_remove_threshold = models.PositiveIntegerField(default=5, help_text="Remove surplus discount when stock falls to this level")
+
     harvest_date = models.DateField(null=True, blank=True)
     best_before_date = models.DateField(null=True, blank=True)
 
@@ -79,3 +82,28 @@ class StorageGuide(models.Model):
     def __str__(self):
         return f"Storage guide for {self.product.name}"
         
+def product_has_active_discount(self):
+    return (
+        getattr(self, "discount_percent", 0) > 0
+        and getattr(self, "stock_qty", 0) >= getattr(self, "overstock_threshold", 0)
+        and getattr(self, "stock_qty", 0) > getattr(self, "discount_remove_threshold", 0)
+    )
+
+Product.has_active_discount = product_has_active_discount
+
+
+from decimal import Decimal
+
+def active_discount_percent(self):
+    if self.discount_percent > 0 and self.stock_qty >= self.overstock_threshold and self.stock_qty > self.discount_remove_threshold:
+        return self.discount_percent
+    return 0
+
+def active_discount_price(self):
+    discount = active_discount_percent(self)
+    if discount > 0:
+        return self.price_gbp - (self.price_gbp * Decimal(discount) / Decimal(100))
+    return self.price_gbp
+
+Product.active_discount_percent = property(active_discount_percent)
+Product.active_discount_price = property(active_discount_price)

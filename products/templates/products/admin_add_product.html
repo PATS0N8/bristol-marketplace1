@@ -84,6 +84,19 @@
             <input type="number" name="discount_percent" min="0" max="100" value="0" style="width:100%;" placeholder="e.g. 20 for 20% off">
         </p>
 
+        
+        <p>
+            <label><strong>Overstock Threshold</strong></label><br>
+            <input type="number" name="overstock_threshold" min="0" value="20" style="width:100%;">
+            <small>When stock is at or above this level, the product can be treated as surplus.</small>
+        </p>
+
+        <p>
+            <label><strong>Remove Discount Threshold</strong></label><br>
+            <input type="number" name="discount_remove_threshold" min="0" value="5" style="width:100%;">
+            <small>When stock falls to this level, the surplus discount is automatically removed.</small>
+        </p>
+
         <button class="btn btn-primary" type="submit">Create Product</button>
     </form>
 </div>

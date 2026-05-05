@@ -34,15 +34,31 @@
         {% endif %}
     </div>
 
-    {% if product.is_surplus and product.discount_percent > 0 %}
+    {% if product.has_active_discount %}
         <p class="detail-row" style="margin-bottom:16px;">
             <strong>Price:</strong>
-            <span style="text-decoration: line-through; color: #9ca3af;">£{{ product.price_gbp }}</span>
+            <span style="text-decoration: line-through; color: #9ca3af;">{% if product.active_discount_percent %}
+                <span style="text-decoration: line-through; color:#6b7280;">£{{ product.price_gbp }}</span>
+                <strong style="color:#dc2626;">£{{ product.active_discount_price }}</strong>
+                <span style="background:#fef2f2; color:#dc2626; padding:2px 8px; border-radius:8px; font-size:13px;">
+                    {{ product.active_discount_percent }}% OFF
+                </span>
+            {% else %}
+                £{{ product.price_gbp }}
+            {% endif %}</span>
             <span style="color: #dc2626; font-weight: bold;">£{{ product.discounted_price }}</span>
             <span style="background:#fef2f2; color:#dc2626; padding: 2px 8px; border-radius: 8px; font-size:13px;">{{ product.discount_percent }}% OFF — Surplus</span>
         </p>
     {% else %}
-        <p class="detail-row" style="margin-bottom:16px;"><strong>Price:</strong> £{{ product.price_gbp }}</p>
+        <p class="detail-row" style="margin-bottom:16px;"><strong>Price:</strong> {% if product.active_discount_percent %}
+                <span style="text-decoration: line-through; color:#6b7280;">£{{ product.price_gbp }}</span>
+                <strong style="color:#dc2626;">£{{ product.active_discount_price }}</strong>
+                <span style="background:#fef2f2; color:#dc2626; padding:2px 8px; border-radius:8px; font-size:13px;">
+                    {{ product.active_discount_percent }}% OFF
+                </span>
+            {% else %}
+                £{{ product.price_gbp }}
+            {% endif %}</p>
     {% endif %}
 
     <div class="info-panel" style="padding: 12px 16px; margin-bottom: 12px;">
