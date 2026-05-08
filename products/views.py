@@ -447,7 +447,7 @@ def checkout(request):
     for pid, qty in cart.items():
         product = Product.objects.select_related("producer", "category").get(id=pid)
 
-        subtotal = product.price_gbp * qty
+        subtotal = product.discounted_price() * qty
         total += subtotal
 
         item = {
@@ -499,7 +499,7 @@ def payment(request):
     for pid, qty in cart.items():
         product = Product.objects.select_related("producer", "category").get(id=pid)
 
-        subtotal = product.price_gbp * qty
+        subtotal = product.discounted_price() * qty
         total += subtotal
 
         item = {
